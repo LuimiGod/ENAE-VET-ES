@@ -1,0 +1,18 @@
+---
+alwaysApply: true
+---
+
+# Business Rules Overview
+
+This folder contains the core business rules for the ENAE-VET scheduling and operations logic.
+
+## Agenda and Surgical Scheduling
+
+- See `Reglas-de-Negocio-Logica-Agenda.mdc` for the full specification of:
+  - Daily capacity model (240-minute quota, operative days, and surgical window).
+  - Service durations for cats and dogs.
+  - Constraints such as the maximum number of dogs per day and validation rules.
+  - Delivery time windows by species and client communication protocol.
+
+All scheduling logic in the codebase must be consistent with the rules defined in `Reglas-de-Negocio-Logica-Agenda.mdc`.
+

@@ -1,0 +1,15 @@
+---
+description: Jira board context and usage for this project
+alwaysApply: true
+---
+
+# Jira Board for This Project
+
+- **Primary Jira board URL**: `https://luimiamezquita.atlassian.net?continue=https%3A%2F%2Fluimiamezquita.atlassian.net%2Fwelcome%2Fsoftware&atlOrigin=eyJpIjoiYWVhNTcwN2ZlNDIyNDEwN2E1ZWRjYTgxNGNiMjJkNzEiLCJwIjoiaiJ9`
+
+## How the assistant should use this
+
+- **When discussing tasks, bugs, or features**, assume they may correspond to issues or epics in this Jira instance.
+- **When the user references a Jira ticket key or link**, treat it as the source of truth for requirements and status.
+- **Summaries and plans** should be written so they can be copied into Jira descriptions, comments, or acceptance criteria.
+- **Do not fabricate Jira data** (statuses, fields, or workflows); rely only on information the user provides from Jira.
