@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh pr create --title 'docs/VET-2: README maestro como plantilla viva del proyecto' --body ':*)"
+    ]
+  }
+}
