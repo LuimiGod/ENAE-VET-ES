@@ -19,9 +19,9 @@ Plataforma backend que expone un **chatbot clínico veterinario** accesible vía
 
 | Funcionalidad | Estado |
 |---|---|
-| Chatbot simple (Flask + LangChain + OpenAI) | Hecho |
+| Chatbot simple (Flask + LangChain + Anthropic) | Hecho |
 | README maestro / plantilla viva (VET-2) | En curso |
-| Despliegue en Vercel (VET-3) | To Do |
+| Despliegue en Vercel (VET-3) | En curso — infra lista; falta vincular proyecto y pegar URL |
 | Sistema de prompt veterinario + disclaimers | To Do |
 | RAG sobre documentación interna | To Do |
 | Tool de agenda / calendario | To Do |
@@ -49,7 +49,7 @@ Plataforma backend que expone un **chatbot clínico veterinario** accesible vía
 |---|---|---|
 | VET-1 | Setup inicial del repositorio | Hecho |
 | VET-2 | README maestro: estructura y huecos para lo que viene | En curso |
-| VET-3 | Despliegue en Vercel | To Do |
+| VET-3 | Despliegue en Vercel | En curso |
 | VET-4 | Sistema de prompt veterinario + disclaimers | To Do |
 | VET-5 | RAG sobre documentación interna | To Do |
 | VET-6 | Tool de agenda / calendario Google | To Do |
@@ -86,16 +86,16 @@ pip install -r requirements.txt
 Copia el fichero de ejemplo y rellena tus valores:
 
 ```bash
-cp .env.example .env   # pendiente: crear .env.example en VET-3
+cp .env.example .env   # Windows (PowerShell): Copy-Item .env.example .env
 ```
 
 | Variable | Descripción | Obligatoria |
 |---|---|---|
-| `OPENAI_API_KEY` | Clave de API de OpenAI | Sí |
-| `LLM_MODEL` | Modelo a usar (ej. `gpt-4o-mini`) | No (default: `gpt-4o-mini`) |
+| `ANTHROPIC_API_KEY` | Clave de API de Anthropic | Sí |
+| `LLM_MODEL` | Modelo a usar (ej. `claude-haiku-4-5-20251001`) | No (default: `claude-haiku-4-5-20251001`) |
 | `FLASK_ENV` | Entorno Flask (`development` / `production`) | No |
 
-> `.env.example` se creará en el ticket VET-3 junto con el despliegue.
+Los secretos van **solo** en `.env` (local) o en el panel de Vercel (producción/preview). No los commitees.
 
 ---
 
@@ -114,14 +114,51 @@ Abre `http://localhost:5000` en el navegador — incluye un formulario de prueba
 
 ### API en producción (Vercel)
 
-> URL: **pendiente hasta VET-3**
+**Arquitectura:** la app es **Flask en una sola función serverless** de Vercel (Python runtime). El fichero `app.py` reexporta la misma instancia `app` que define `chatbot_simple.py`, que es el [punto de entrada que documenta Vercel para Flask](https://vercel.com/docs/frameworks/backend/flask). No hace falta un host aparte para este MVP.
+
+**URL de producción (rellenar tras el primer deploy):** _ej. `https://<tu-proyecto>.vercel.app`_
+
+**Flujo Git → build → URL**
+
+1. Conectar el repo en [Vercel Dashboard](https://vercel.com/dashboard) → *Add New* → *Project* → importar `ENAE-VET-ES` desde GitHub.
+2. Dejar detección automática (Flask + `requirements.txt`). *Root Directory* raíz del repo.
+3. En *Settings → Environment Variables*, añadir al menos `ANTHROPIC_API_KEY` para *Production* y *Preview* (opcional: `LLM_MODEL`).
+4. *Deploy*. Cada push a `main` genera producción; las ramas/PRs generan **Preview** con URL propia.
+5. Copiar la URL de *Deployments* y pegarla arriba en este README (commit en el ticket VET-3).
+
+**Verificación mínima (aceptación VET-3)**
+
+0. `GET /health` → `200` y JSON `{"status": "ok", "llm_configured": true|false}` (no usa LangChain ni red externa; sirve para smoke test tras el deploy).
+1. Abrir la URL pública: debe cargarse el HTML del chatbot (`GET /`).
+2. En el formulario, enviar un mensaje de prueba o llamar `POST /ask_bot` con `msg=hola` (body form) y comprobar JSON `200` y cuerpo `{"msg": "..."}`.
+3. Si falta la clave en Vercel, `POST /ask_bot` debe responder `500` con mensaje indicando `ANTHROPIC_API_KEY`.
+
+> **Nota (backend / agente):** el refuerzo de prompts veterinarios, disclaimers y flujos de triage van en **VET-4+**, no en VET-3. Criterio de capas: `.cursor/agents/veterinary-langchain-backend.mdc`.
+
+**Evidencia de deploy OK (entregable):** pegar aquí un resumen del log de Vercel o enlazar la captura del PR.
+
+```
+(Ejemplo — sustituir por salida real de “Deployment Ready” en Vercel)
+✓ Build Completed
+✓ Deployment: https://xxxx.vercel.app
+```
+
+**Desarrollo local con runtime similar a Vercel**
+
+Requiere [Vercel CLI](https://vercel.com/docs/cli) ≥ 48.2.10 y variables en `.env` o en el entorno:
+
+```bash
+pip install -r requirements.txt
+vercel dev
+```
 
 ---
 
 ## 7. Documentación de la API
 
 - **OpenAPI / Swagger:** pendiente — se habilitará al migrar a FastAPI (VET-4 o posterior).
-- Endpoint actual: `POST /ask_bot` — body form `msg=<texto>`, responde JSON `{"msg": "<respuesta>"}`.
+- `GET /health` — JSON de estado (VET-3 / monitors).
+- `POST /ask_bot` — body form `msg=<texto>`, responde JSON `{"msg": "<respuesta>"}`.
 
 ---
 
@@ -218,5 +255,5 @@ Principios de diseño:
 |---|---|
 | Repositorio | <https://github.com/LuimiGod/ENAE-VET-ES> |
 | Tablero Jira | Pendiente — responsable: _[nombre]_ |
-| App en producción (Vercel) | Pendiente hasta VET-3 |
+| App en producción (Vercel) | Ver sección *API en producción (Vercel)* — URL en README tras deploy |
 | OpenAPI docs | Pendiente hasta migración a FastAPI |
