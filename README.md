@@ -114,14 +114,14 @@ Abre `http://localhost:5000` en el navegador — incluye un formulario de prueba
 
 ### API en producción (Vercel)
 
-**Arquitectura:** la app es **Flask en una sola función serverless** de Vercel (Python runtime). La instancia `app` vive en `app.py` ([entrada soportada por Vercel para Flask](https://vercel.com/docs/frameworks/backend/flask)). `chatbot_simple.py` solo arranca ese mismo `app` en local; **no uses** `vercel.json` con rewrites a `/api/...` salvo que tu función Python esté realmente ahí — un rewrite a un destino inexistente produce `NOT_FOUND` (404) en el edge.
+**Arquitectura:** la instancia Flask `app` está definida en `app.py`. Para Vercel, `api/index.py` reexporta esa misma `app` y `vercel.json` reescribe todas las rutas a `/api/index`, de modo que el runtime **Python serverless** sí se construye (si el inspector del deploy solo muestra `staticAssets` y `app.py` como “Misc”, **no** hay función Flask: `/` dará `NOT_FOUND`). `.vercelignore` evita subir `.cursor/` y `.claude/` al bundle. `pyproject.toml` refuerza dependencias y `requires-python` para el builder.
 
 **URL de producción (rellenar tras el primer deploy):** _ej. `https://<tu-proyecto>.vercel.app`_
 
 **Flujo Git → build → URL**
 
 1. Conectar el repo en [Vercel Dashboard](https://vercel.com/dashboard) → *Add New* → *Project* → importar `ENAE-VET-ES` desde GitHub.
-2. Dejar detección automática (Flask + `requirements.txt`). *Root Directory* raíz del repo.
+2. *Root Directory:* raíz del repo. Tras el deploy, en el inspector debe aparecer una **función** bajo `/api/index` (o logs de `pip`/`flask`), no solo `staticAssets` con todo como “Misc”.
 3. En *Settings → Environment Variables*, añadir al menos `ANTHROPIC_API_KEY` para *Production* y *Preview* (opcional: `LLM_MODEL`).
 4. *Deploy*. Cada push a `main` genera producción; las ramas/PRs generan **Preview** con URL propia.
 5. Copiar la URL de *Deployments* y pegarla arriba en este README (commit en el ticket VET-3).
