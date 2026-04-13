@@ -116,7 +116,7 @@ Abre `http://localhost:5000` en el navegador — incluye un formulario de prueba
 
 **Arquitectura:** la instancia Flask `app` está definida en `app.py`. Para Vercel, `api/index.py` reexporta esa misma `app` y `vercel.json` reescribe todas las rutas a `/api/index`, de modo que el runtime **Python serverless** sí se construye (si el inspector del deploy solo muestra `staticAssets` y `app.py` como “Misc”, **no** hay función Flask: `/` dará `NOT_FOUND`). `.vercelignore` evita subir `.cursor/` y `.claude/` al bundle. `pyproject.toml` refuerza dependencias y `requires-python` para el builder.
 
-**URL de producción (rellenar tras el primer deploy):** _ej. `https://<tu-proyecto>.vercel.app`_
+**URL de producción:** https://enae-vet-es-rose.vercel.app
 
 **Flujo Git → build → URL**
 
