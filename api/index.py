@@ -1,9 +1,14 @@
-"""Entrada serverless para Vercel: reutiliza la misma app que `app.py`.
+"""Debug temporal: muestra el path que Flask recibe desde Vercel."""
+from flask import Flask, jsonify, request
 
-Sin este fichero, algunos proyectos se despliegan solo como estáticos (sin
-runtime Python) y `/` devuelve NOT_FOUND.
-"""
+app = Flask(__name__)
 
-from app import app
 
-__all__ = ["app"]
+@app.route("/", defaults={"path": ""})
+@app.route("/<path:path>")
+def catch_all(path):
+    return jsonify({
+        "path": request.path,
+        "full_path": request.full_path,
+        "script_name": request.environ.get("SCRIPT_NAME", ""),
+    }), 200
