@@ -2,8 +2,6 @@ import os
 from typing import Any, Optional
 
 from flask import Flask, jsonify, render_template_string, request
-from langchain_anthropic import ChatAnthropic
-from langchain_core.prompts import ChatPromptTemplate
 
 
 HTML_TEMPLATE = """
@@ -36,6 +34,9 @@ def _get_bot_chain() -> Optional[Any]:
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
         return None
+
+    from langchain_anthropic import ChatAnthropic
+    from langchain_core.prompts import ChatPromptTemplate
 
     prompt = ChatPromptTemplate.from_messages(
         [
