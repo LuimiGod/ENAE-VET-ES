@@ -2,8 +2,6 @@ import os
 from typing import Any, Optional
 
 from flask import Flask, jsonify, render_template_string, request
-from langchain_anthropic import ChatAnthropic
-from langchain_core.prompts import ChatPromptTemplate
 
 
 HTML_TEMPLATE = """
@@ -24,24 +22,23 @@ HTML_TEMPLATE = """
   </html>
 """
 
-
 app = Flask(__name__)
 
 
 def _get_bot_chain() -> Optional[Any]:
-    """Build the simplest possible chain: only the user message goes to the LLM."""
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
         return None
 
-    prompt = ChatPromptTemplate.from_messages([("human", "{input}")])
+    from langchain_anthropic import ChatAnthropic
+    from langchain_core.prompts import ChatPromptTemplate
 
+    prompt = ChatPromptTemplate.from_messages([("human", "{input}")])
     llm = ChatAnthropic(
         model=os.environ.get("LLM_MODEL", "claude-haiku-4-5-20251001"),
         temperature=0.3,
         api_key=api_key,
     )
-
     return prompt | llm
 
 
