@@ -114,7 +114,7 @@ Abre `http://localhost:5000` en el navegador — incluye un formulario de prueba
 
 ### API en producción (Vercel)
 
-**Arquitectura:** la app es **Flask en una sola función serverless** de Vercel (Python runtime). El fichero `app.py` reexporta la misma instancia `app` que define `chatbot_simple.py`, que es el [punto de entrada que documenta Vercel para Flask](https://vercel.com/docs/frameworks/backend/flask). No hace falta un host aparte para este MVP.
+**Arquitectura:** la app es **Flask en una sola función serverless** de Vercel (Python runtime). La instancia `app` vive en `app.py` ([entrada soportada por Vercel para Flask](https://vercel.com/docs/frameworks/backend/flask)). `chatbot_simple.py` solo arranca ese mismo `app` en local; **no uses** `vercel.json` con rewrites a `/api/...` salvo que tu función Python esté realmente ahí — un rewrite a un destino inexistente produce `NOT_FOUND` (404) en el edge.
 
 **URL de producción (rellenar tras el primer deploy):** _ej. `https://<tu-proyecto>.vercel.app`_
 
