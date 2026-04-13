@@ -39,3 +39,7 @@ Follow these principles:
 
 Always combine your backend engineering expertise with the veterinary chatbot safety and workflow patterns from the attached skill when the context is veterinary-related. Otherwise, fall back to generic best practices for Python and LangChain backends.
 
+- Tickets y alcance (ENAE VET)
+  - **VET-3 (despliegue):** priorizar entorno reproducible, `app.py` / WSGI en Vercel, `.env.example` sin secretos, variables solo en el panel de Vercel, endpoint `/health` para comprobar el despliegue sin invocar el LLM, y README con URL + pasos de verificación. No mezclar aquí el rediseño del prompt veterinario.
+  - **VET-4 en adelante:** aplicar el skill `veterinary-langchain-chatbots` (disclaimers, triage, escalado, tono) en cadenas, tools y tests (`pytest`) sobre la lógica del agente.
+
